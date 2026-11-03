@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sms-checker</title>
+  <style>
+    :root { --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    main { max-width: 720px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 24px; }
+    form { display: flex; gap: 8px; margin: 16px 0; }
+    input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: var(--text); }
+    button { padding: 10px 16px; border-radius: 8px; border: none; background: var(--accent); color: #082f49; font-weight: 600; cursor: pointer; }
+    .msg { background: var(--card); border-radius: 12px; padding: 14px; margin-top: 12px; border: 1px solid #334155; }
+    .msg .code { font-size: 28px; font-weight: 700; letter-spacing: 2px; color: #4ade80; }
+    .msg .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .msg .text { margin-top: 8px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>📱 sms-checker</h1>
+    <form id="phoneForm">
+      <input id="phone" placeholder="Номер телефона, например 87001355000" value="87001355000" />
+      <button type="submit">Обновить</button>
+    </form>
+    <div id="status">Загрузка…</div>
+    <div id="messages"></div>
+  </main>
+  <script>
+    const phoneInput = document.getElementById('phone');
+    const messagesEl = document.getElementById('messages');
+    const statusEl = document.getElementById('status');
+
+    async function load() {
+      const phone = phoneInput.value.trim();
+      const qs = phone ? `?phone=${encodeURIComponent(phone)}` : '';
+      try {
+        const res = await fetch(`/api/sms${qs}`);
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+        const list = data.messages || [];
+        if (list.length === 0) {
+          statusEl.textContent = 'SMS пока не получен.';
+          messagesEl.innerHTML = '';
+          return;
+        }
+        statusEl.textContent = `${list.length} SMS`;
+        messagesEl.innerHTML = list.map((m) => `
+          <div class="msg">
+            <div class="code">${m.code || '—'}</div>
+            <div class="meta">От: ${m.from} · Время: ${m.receivedAt}</div>
+            <div class="text">${m.text}</div>
+          </div>`).join('');
+      } catch (e) {
+        statusEl.textContent = 'API недоступен.';
+      }
+    }
+    document.getElementById('phoneForm').addEventListener('submit', (e) => { e.preventDefault(); load(); });
+    setInterval(load, 5000);
+    load();
+  </script>
+</body>
+</html>

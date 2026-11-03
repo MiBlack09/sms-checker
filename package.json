@@ -1,0 +1,29 @@
+{
+  "name": "sms-checker",
+  "version": "1.0.0",
+  "description": "Sms-checker — получение SMS по номеру телефона и просмотр кодов через CLI",
+  "main": "src/server.js",
+  "bin": {
+    "sms-checker": "bin/sms-checker.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "cli": "node bin/sms-checker.js",
+    "demo": "node scripts/demo.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "sms",
+    "sms-checker",
+    "2fa",
+    "verification",
+    "otp"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
