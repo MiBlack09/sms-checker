@@ -5,10 +5,20 @@ const express = require('express');
 const { SmsService } = require('./service');
 const { SourceRegistry } = require('./sources');
 const { WebhookSource } = require('./sources/webhook');
+const { HttpGatewaySource } = require('./sources/httpGateway');
 
 const service = new SmsService();
 const registry = new SourceRegistry();
 registry.register(new WebhookSource());
+if (process.env.SMS_GATEWAY_URL) {
+  registry.register(
+    new HttpGatewaySource({
+      gatewayUrl: process.env.SMS_GATEWAY_URL,
+      apiKey: process.env.SMS_GATEWAY_API_KEY,
+    }),
+  );
+}
+registry.on('message', (sms) => service.ingest(sms));
 
 const app = express();
 app.disable('x-powered-by');
@@ -52,6 +62,14 @@ const PORT = Number(process.env.PORT || 3000);
 
 const server = app.listen(PORT, () => {
   console.log(`sms-checker API: http://localhost:${PORT}`);
+  registry.start();
 });
+
+const shutdown = () => {
+  registry.stop();
+  server.close(() => process.exit(0));
+};
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
 
 module.exports = { app, service, registry, server };

@@ -94,10 +94,25 @@ async function apiPost(path, body) {
 function formatPhone(phone) {
   const digits = String(phone || '').replace(/\D/g, '');
   if (!digits) return '—';
-  const national = digits.startsWith('7') ? digits.slice(1) : digits;
-  const grouped = national.replace(/(\d{3})(?=\d)/g, ' $1');
-  if (digits.startsWith('7')) return `+7 ${grouped}`;
-  return `+${digits}`;
+  let core = digits;
+  if (core.startsWith('8') && core.length === 11) core = `7${core.slice(1)}`;
+  const national = core.startsWith('7') ? core.slice(1) : core;
+  const parts = [];
+  if (national.length > 3) {
+    parts.push(national.slice(0, 3));
+    const rest = national.slice(3);
+    if (rest.length > 3) {
+      parts.push(rest.slice(0, 3));
+      parts.push(rest.slice(3));
+    } else {
+      parts.push(rest);
+    }
+  } else {
+    parts.push(national);
+  }
+  const grouped = parts.join(' ');
+  if (core.startsWith('7')) return `+7 ${grouped}`;
+  return `+${core}`;
 }
 
 function formatTime(iso) {

@@ -26,6 +26,33 @@ class SourceRegistry extends EventEmitter {
     return this.sources.delete(id);
   }
 
+  start() {
+    this.intervals = [];
+    for (const source of this.all) {
+      source.start();
+      if (typeof source.fetchBatch === 'function' && source.config && source.config.gatewayUrl) {
+        const interval = setInterval(async () => {
+          try {
+            const batch = await source.fetchBatch();
+            for (const sms of batch) this.emit('message', sms);
+          } catch {
+            // ignore polling errors
+          }
+        }, source.config.pollIntervalMs || 30000);
+        interval.unref?.();
+        this.intervals.push(interval);
+      }
+    }
+    return this;
+  }
+
+  stop() {
+    for (const timer of this.intervals || []) clearInterval(timer);
+    this.intervals = [];
+    for (const source of this.all) source.stop();
+    return this;
+  }
+
   get all() {
     return [...this.sources.values()];
   }

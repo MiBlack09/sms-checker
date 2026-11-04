@@ -18,6 +18,11 @@ class BaseSource {
   receive(raw) {
     return Promise.resolve(null);
   }
+
+  // Для источников, опрашивающих шлюз через REST API (например, /incoming).
+  fetchBatch() {
+    return Promise.resolve([]);
+  }
 }
 
 module.exports = BaseSource;

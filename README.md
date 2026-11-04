@@ -79,7 +79,21 @@ SourceRegistry → SmsService → SmsStore → CLI / Веб
 `SourceRegistry` рассылает входящее сообщение по всем зарегистрированным источникам без ограничений.
 
 - `WebhookSource` — приём через `POST /api/sms`.
+- `HttpGatewaySource` — подключение SMS-шлюза через REST API (опрос `GET {gatewayUrl}` + приём push).
 - Для добавления новых источников (SMS-шлюзов, провайдеров, IMAP и т.п.) достаточно реализовать интерфейс `BaseSource` (`start`, `stop`, `receive`) и зарегистрировать его в `src/server.js`.
+
+## SMS-шлюз через HTTP
+
+Для подключения SMS-шлюза через REST API:
+
+1. Укажи переменные окружения в `.env`:
+```
+SMS_GATEWAY_URL=https://your-gateway.example.com/api/sms
+SMS_GATEWAY_API_KEY=your-key
+SMS_GATEWAY_POLL_INTERVAL_MS=30000
+```
+2. При запуске (`npm start`) при наличии `SMS_GATEWAY_URL` регистрируется `HttpGatewaySource`, который опрашивает `GET {SMS_GATEWAY_URL}` (с заголовком `Authorization: Bearer {SMS_GATEWAY_API_KEY}`) и обрабатывает входящие SMS.
+3. Полученные SMS попадают в общую цепочку: sources → service → store → CLI.
 
 ## Тесты
 
