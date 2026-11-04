@@ -17,7 +17,7 @@ const HELP_TEXT = [
   '  help              Показать справку',
   '',
   'Опции:',
-  '  -p, --phone <n>   Номер телефона (по умолчанию: 87001355000)',
+  '  -p, --phone <n>   Номер телефона (по умолчанию: +77070707000)',
   '  -c, --code <n>     Код SMS (используется в send)',
   '  -t, --text <txt>   Текст SMS (используется в send)',
   '  -w, --watch        Смотреть за новыми SMS',
@@ -35,7 +35,7 @@ function printHelp() {
 function parseArgs(argv) {
   const opts = {
     command: 'latest',
-    phone: process.env.SMS_CHECKER_PHONE || '87001355000',
+    phone: process.env.SMS_CHECKER_PHONE || '+77070707000',
     code: null,
     text: null,
   };

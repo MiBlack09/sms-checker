@@ -1,6 +1,6 @@
 'use strict';
 
-const DEFAULT_PHONE = process.env.SMS_CHECKER_PHONE || '87001355000';
+const DEFAULT_PHONE = process.env.SMS_CHECKER_PHONE || '+77070707000';
 
 /**
  * Приводит номер телефона к виду E.164 (+7 700 135 5000).

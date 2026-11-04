@@ -18,9 +18,9 @@ class FakeSource extends BaseSource {
 
 test('registry собирает sms от всех источников', async () => {
   const registry = new SourceRegistry();
-  registry.register(new FakeSource('source-a', { id: 'sms-1', phone: '+77001355000', text: 'a', code: '111222', from: 'x', receivedAt: new Date().toISOString(), source: 'source-a' }));
+  registry.register(new FakeSource('source-a', { id: 'sms-1', phone: '+77070707000', text: 'a', code: '111222', from: 'x', receivedAt: new Date().toISOString(), source: 'source-a' }));
   registry.register(new FakeSource('source-b', null));
-  const messages = await registry.receive({ phone: '87001355000' });
+  const messages = await registry.receive({ phone: '77070707000' });
   assert.equal(messages.length, 1);
 });
 

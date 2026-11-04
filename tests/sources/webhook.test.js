@@ -11,8 +11,8 @@ test('webhook source возвращает null, если нет номера т�
 });
 
 test('webhook source нормализует входящее sms', async () => {
-  const sms = await source.receive({ phone: '87001355000', text: 'Ваш код: 123456', source: 'webhook' });
-  assert.equal(sms.phone, '+77001355000');
+  const sms = await source.receive({ phone: '77070707000', text: 'Ваш код: 123456', source: 'webhook' });
+  assert.equal(sms.phone, '+77070707000');
   assert.equal(sms.code, '123456');
   assert.equal(sms.source, 'webhook');
 });

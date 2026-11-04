@@ -6,8 +6,8 @@ const { HttpGatewaySource } = require('../../src/sources/httpGateway');
 
 test('http gateway source нормализует push sms', async () => {
   const source = new HttpGatewaySource({});
-  const sms = await source.receive({ phone: '87001355000', text: 'Ваш код: 123456', source: 'http-gateway' });
-  assert.equal(sms.phone, '+77001355000');
+  const sms = await source.receive({ phone: '77070707000', text: 'Ваш код: 123456', source: 'http-gateway' });
+  assert.equal(sms.phone, '+77070707000');
   assert.equal(sms.code, '123456');
   assert.equal(sms.source, 'http-gateway');
 });
@@ -22,7 +22,7 @@ test('http gateway source fetchBatch получает sms из REST API шлюз
   const originalFetch = global.fetch;
   global.fetch = async () => ({
     ok: true,
-    json: async () => ({ messages: [{ phone: '87001355000', text: 'Ваш код: 654321', source: 'http-gateway' }] }),
+    json: async () => ({ messages: [{ phone: '77070707000', text: 'Ваш код: 654321', source: 'http-gateway' }] }),
   });
   try {
     const batch = await source.fetchBatch();

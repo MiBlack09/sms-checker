@@ -2,15 +2,19 @@
 
 **Sms-checker** — проект по получению SMS-писем по номеру телефона и просмотру SMS-кода на рабочем месте (ноутбуке) через командную строку.
 
-Условный номер, с которого проверяется SMS: **`87001355000`** (принимаем в формате `8...`, `+7...`, `00...` — автоматически нормализуется).
+Условные номера для тестирования, с которых проверяется SMS:
+
+- **ele2 / Altel:** `+77070707000`
+- **Beeline Казахстан:** `+77059077000` (также используется старый стандартный формат `+79037011111`)
+- **Kcell / activ:** `+77010002525` (и SMS-центры)
 
 ## Возможности
 
 - Приём SMS через webhook-источник (`POST /api/sms`).
+- Опрос SMS-шлюза через REST API (`HttpGatewaySource`).
 - Единое хранилище SMS (JSON-файл `data/sms-store.json`).
 - Извлечение SMS-кода из текста (например, `Ваш код подтверждения: 123456`).
 - CLI-команда `sms-checker` — последний SMS, список, мониторинг новых SMS.
-- Веб-интерфейс в `public/index.html` (доступен через API-сервер).
 
 ## Требования
 
@@ -20,7 +24,7 @@
 ## Установка
 
 ```bash
-git clone <ваш-репозиторий> sms-checker
+git clone https://github.com/MiBlack09/sms-checker.git sms-checker
 cd sms-checker
 npm install
 cp .env.example .env
@@ -34,7 +38,7 @@ npm start
 
 # В другом терминале — CLI
 npm run cli -- latest
-npm run cli -- --phone 87001355000 latest
+npm run cli -- --phone +77070707000 latest
 
 # Или через npx / npm link
 npx sms-checker latest
@@ -43,7 +47,7 @@ npx sms-checker latest
 ## Команды CLI
 
 ```bash
-# Последнее SMS для номера 87001355000
+# Последнее SMS (по умолчанию для +77070707000)
 sms-checker
 
 # Список всех SMS
@@ -60,8 +64,6 @@ npm run demo -- 123456 "Ваш код подтверждения: 123456"
 
 ## Как приходит SMS
 
-Реальный SMS приходит на телефон (через GSM-модем / шлюз), а шлюз (например, через webhook) отправляет его на backend:
-
 ```
 GSM-модем / SMS-шлюз
         │  POST /api/sms
@@ -72,7 +74,7 @@ sms-checker API (Express)
 SourceRegistry → SmsService → SmsStore → CLI / Веб
 ```
 
-С payload'ом должно быть: `{ "phone": "87001355000", "from": "...", "text": "Ваш код: 123456", "code": "123456" }`.
+С payload'ом должно быть: `{ "phone": "+77070707000", "from": "...", "text": "Ваш код: 123456", "code": "123456" }`.
 
 ## Источники SMS
 
@@ -115,6 +117,7 @@ sms-checker/
 │   ├── smsUtils.js           # нормализация номеров/кодов
 │   └── sources/              # источники SMS
 ├── tests/                    # тесты
+├── .github/workflows/        # CI
 ├── .env.example
 └── package.json
 ```
@@ -133,5 +136,5 @@ sms-checker/
 ```bash
 curl -X POST http://localhost:3000/api/sms \
   -H "Content-Type: application/json" \
-  -d '{"phone": "87001355000", "text": "Ваш код подтверждения: 123456", "source": "webhook"}'
+  -d '{"phone": "+77070707000", "text": "Ваш код подтверждения: 123456", "source": "webhook"}'
 ```

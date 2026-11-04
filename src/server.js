@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
-    phone: process.env.SMS_CHECKER_PHONE || '87001355000',
+    phone: process.env.SMS_CHECKER_PHONE || '+77070707000',
     sources: registry.all.map((s) => ({ id: s.id, name: s.name })),
   });
 });

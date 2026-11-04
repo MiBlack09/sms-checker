@@ -3,7 +3,7 @@
 
 const API_URL = (process.env.SMS_CHECKER_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
 
-const phone = process.env.SMS_CHECKER_PHONE || '87001355000';
+const phone = process.env.SMS_CHECKER_PHONE || '+77070707000';
 
 async function main() {
   const code = process.argv[2] || String(Math.floor(100000 + Math.random() * 900000));
